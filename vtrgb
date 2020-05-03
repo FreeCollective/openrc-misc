@@ -1,4 +1,5 @@
 #!/sbin/openrc-run
+# required sys-apps/kdb
 
 default_conf=/etc/vtrgb.conf
 command=/usr/bin/setvtrgb

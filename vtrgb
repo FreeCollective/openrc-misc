@@ -1,0 +1,35 @@
+#!/sbin/openrc-run
+
+default_conf=/etc/vtrgb.conf
+command=/usr/bin/setvtrgb
+command_args="${default_conf}"
+extra_commands="save default"
+
+depend() {
+	need localmount
+}
+
+default() {
+	ebegin "Restoring VGA VT RGB palette"
+	command_args="vga"
+	start
+	return 0
+}
+
+save() {
+	ebegin "Saving VT RGB palette"
+	cat /sys/module/vt/parameters/default_{red,grn,blu} > ${default_conf}
+	eend 0
+}
+
+start_pre() {
+	if [ ! -r "${default_conf}" ] ; then
+	   save || return $?
+	fi
+}
+
+stop() {
+	if [ "${RC_CMD}" != "restart" ] ; then
+	   save || return $?
+	fi
+}
